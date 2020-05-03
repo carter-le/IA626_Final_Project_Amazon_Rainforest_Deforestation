@@ -93,8 +93,8 @@ This is a table with the results:
 | 2014 | 4424619910                  | 4425                            | 34109             |
 | 2015 | 5266362609                  | 5266                            | 37214             |
 
-```
-# Bar chart
+
+
 {{Bar-Chart}}
 - a:1
 - b:2
@@ -102,4 +102,3 @@ This is a table with the results:
 - a:1
 - b:2
 - c: 3
-```
