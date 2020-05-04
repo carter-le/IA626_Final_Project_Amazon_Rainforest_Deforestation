@@ -93,11 +93,10 @@ This is a table with the results:
 
 
 
-![geojson](/images/deforestation_per_year.JPG)
-
+![geojson](/Images/deforestation_per_year.JPG)
 
 We see here that the number of pieces of land lost to deforestation follows the total area lost. 
-![geojson](/images/area_vs_number_areas.JPG)
+![geojson](/Images/area_vs_number_areas.JPG)
 
 Those times where the relative number of pieces of area lost is greater than the relative total area lost could indicate there is a greater number of smaller pieces of land being deforested as opposed to large areas being clear cut by large operations. To know this it would be helpful to have further information, namely, more information on how pieces of land are broken up and classified. This is important because there is big difference between small-scale cutting and large-scale clear cutting. Dealing with sustenance farmers and dealing with plantation farmers require different information, public policy, and enforcement of legislature. 
 
@@ -123,7 +122,7 @@ To create a custom region of the Brazilian Legal Amazon and format it in WKT thi
 
    The following image is geojson opened with the original shapefile downloaded from the Ambdata website:
 
-![geojson](images/original_shapefile.JPG)
+![geojson](Images/original_shapefile.JPG)
 
    
 
@@ -155,7 +154,7 @@ To create a custom region of the Brazilian Legal Amazon and format it in WKT thi
 
    To test this code I uploaded the file to geojson. This confirmed that the integrity of the shape had been maintained. The result is shown here in geojson: 
 
-![geojson](images/reduce_reformatted_json.JPG)
+![geojson](Images/reduce_reformatted_json.JPG)
 
 
 3. Take the properly formatted and reduced dataset and convert from json to WKT 
@@ -199,11 +198,11 @@ To create a custom region of the Brazilian Legal Amazon and format it in WKT thi
 
    This polygon is now ready to be inserted into the FIRMS Download Request:
 
-   ![geojson](images/FIRMS_request.JPG)
+   ![geojson](Images/FIRMS_request.JPG)
 
    We know the request was successful by clicking on "show map" for your request. Mine looked the same as the geojson of the reduced and reformatted json (refer to step 2). The region on the map is shown here: 
 
-   ![geojson](images/FIRMS_map_of_requested_data.JPG)
+   ![geojson](Images/FIRMS_map_of_requested_data.JPG)
 
 
 
@@ -307,10 +306,10 @@ The following table shows the results:
 | 2015 | 117418         | 116901              | 517            |
 
 The following graph shows that the "other" category is a small portion of the total fire area most of the time: 
-![geojson](images/fire_total_veg_other_graph.JPG)
+![geojson](Images/fire_total_veg_other_graph.JPG)
 
 The following is a bar graph of the total fire area (sq. km) per year: 
-![geojson](images/fire_area_bar_graph.JPG)
+![geojson](Images/fire_area_bar_graph.JPG)
 
 On it's own, this data does not tell us much, other than the fact that some years saw more area affected by fires in the Brazilian Legal Amazon than others. 
 
@@ -340,7 +339,7 @@ The following table brings together the results of the analysis:
 
 These were unexpected results. The following is a graph of total area deforested and total area lost to fire:
 
-![geojson](images/deforested_vs_fire_graph.JPG)
+![geojson](Images/deforested_vs_fire_graph.JPG)
 
 
 #### Conclusion 
