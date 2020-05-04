@@ -93,7 +93,7 @@ This is a table with the results:
 
 
 
-![geojson](images/deforestation_per_year.JPG)
+![geojson](/images/deforestation_per_year.JPG)
 
 
 We see here that the number of pieces of land lost to deforestation follows the total area lost. 
