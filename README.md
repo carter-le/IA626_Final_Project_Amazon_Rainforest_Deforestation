@@ -99,7 +99,7 @@ This is a table with the results:
 
 #image
 
-[geojson](/images/original_shapefile.JPG)
+![test](/images/original_shapefile.JPG)
 
 #image
 
