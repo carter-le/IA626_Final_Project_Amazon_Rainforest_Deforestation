@@ -22,11 +22,7 @@ I plan on using the following dataset to make my analysis (subject to change):
 
 #### Dataset 1: PRODES Deforestation Data 
 
-The first dataset I downloaded from Global Forest Watch and can be found 
-
-[here]: **https://data.globalforestwatch.org/datasets/4160f715e12d46a98c989bdbe7e5f4d6_1/data?geometry=-88.744%2C-11.717%2C-33.241%2C3.579&amp;selectedAttribute=shape_Area**	""title""
-
-
+The first dataset I downloaded from Global Forest Watch and can be found here:
 
 https://data.globalforestwatch.org/datasets/4160f715e12d46a98c989bdbe7e5f4d6_1/data?geometry=-88.744%2C-11.717%2C-33.241%2C3.579&amp;selectedAttribute=shape_Area
 
@@ -97,15 +93,13 @@ This is a table with the results:
 
 
 
-#image
+![geojson](images/deforestation_per_year.JPG)
 
-![test](/images/original_shapefile.JPG)
-
-#image
 
 We see here that the number of pieces of land lost to deforestation follows the total area lost. 
+![geojson](images/area_vs_number_areas.JPG)
 
-** conclusion
+Those times where the relative number of pieces of area lost is greater than the relative total area lost could indicate there is a greater number of smaller pieces of land being deforested as opposed to large areas being clear cut by large operations. To know this it would be helpful to have further information, namely, more information on how pieces of land are broken up and classified. This is important because there is big difference between small-scale cutting and large-scale clear cutting. Dealing with sustenance farmers and dealing with plantation farmers require different information, public policy, and enforcement of legislature. 
 
 
 
@@ -129,7 +123,7 @@ To create a custom region of the Brazilian Legal Amazon and format it in WKT thi
 
    The following image is geojson opened with the original shapefile downloaded from the Ambdata website:
 
-   #image 
+![geojson](images/original_shapefile.JPG)
 
    
 
@@ -161,9 +155,8 @@ To create a custom region of the Brazilian Legal Amazon and format it in WKT thi
 
    To test this code I uploaded the file to geojson. This confirmed that the integrity of the shape had been maintained. The result is shown here in geojson: 
 
-   #image
+![geojson](images/reduce_reformatted_json.JPG)
 
-   
 
 3. Take the properly formatted and reduced dataset and convert from json to WKT 
 
@@ -204,13 +197,13 @@ To create a custom region of the Brazilian Legal Amazon and format it in WKT thi
    POLYGON ((-73.2101 -9.4058,-73.1911 -9.3673,-73.1077 -9.3079,-73.0925 -9.2620,-73.0226 -9.2263,-73.0161 -9.1844,-72.9461 -9.1077,-72.9488 -9.0260,-72.9667 -8.9795,-73.0206 -8.9128,-73.0825 -8.8405,-73.1305 -8.7703,-73.1757 -8.6884,-73.2481 -8.6860,-73.3025 -8.6304,-73.3419 -8.6161,-73.3291 -8.5029,-73.3729 -8.4670,-73.4221 -8.4074,-73.4843 -8.3908,-73.5278 -8.3566,-73.5366 -8.2777, -73.2101 -9.4058))
    ```
 
-   This polygon is now ready to be inserted into the FIRMS Download Request
+   This polygon is now ready to be inserted into the FIRMS Download Request:
 
-   #image 
+   ![geojson](images/FIRMS_request.JPG)
 
    We know the request was successful by clicking on "show map" for your request. Mine looked the same as the geojson of the reduced and reformatted json (refer to step 2). The region on the map is shown here: 
 
-   #image 
+   ![geojson](images/FIRMS_map_of_requested_data.JPG)
 
 
 
@@ -220,7 +213,7 @@ Please note the following acknowledgement and refer to the disclaimer from the d
 
 *We acknowledge the use of data and imagery from LANCE FIRMS operated by NASA's Earth Science Data and Information System (ESDIS) with funding provided by NASA Headquarters.*
 
-[disclaimer]: https://earthdata.nasa.gov/earth-observation-data/near-real-time/citation#ed-lance-disclaimer
+Find their disclaimer here: https://earthdata.nasa.gov/earth-observation-data/near-real-time/citation#ed-lance-disclaimer 
 
 The following are the headers and some sample data for the dataset: 
 
@@ -262,6 +255,7 @@ import csv, time
 
 start = time.time()
 fn = 'fire_archive_M6_118818.csv'
+#this was the data file FIRMS sent to me
 f = open(fn,"r")
 reader = csv.reader(f) 
 
@@ -276,7 +270,7 @@ for row in reader:
                 date = row[5][0:4]
                 if date in totalfireareaperyr.keys():
                     totalfireareaperyr[date] += 1
-                    #each row represents 1km area where there is a fire (this is the 						 highest level of granularity that we have)
+#each row represents 1km area where there is a fire (this is the highest level of granularity that we have)
                 else:
                     totalfireareaperyr[date] = 1
             if row[14] == "0":
@@ -313,12 +307,10 @@ The following table shows the results:
 | 2015 | 117418         | 116901              | 517            |
 
 The following graph shows that the "other" category is a small portion of the total fire area most of the time: 
-
-#image 
+![geojson](images/fire_total_veg_other_graph.JPG)
 
 The following is a bar graph of the total fire area (sq. km) per year: 
-
-#image
+![geojson](images/fire_area_bar_graph.JPG)
 
 On it's own, this data does not tell us much, other than the fact that some years saw more area affected by fires in the Brazilian Legal Amazon than others. 
 
@@ -328,35 +320,40 @@ On it's own, this data does not tell us much, other than the fact that some year
 
 The following table brings together the results of the analysis: 
 
-| Year | Total area lost (sq meters) | Total area lost (sq kilometers) | Number areas lost | Total area lost to fire (sq kilometers) |
-| ---- | --------------------------- | ------------------------------- | ----------------- | --------------------------------------- |
-| 2001 | 19488109792                 | 19488                           | 121296            | 98679                                   |
-| 2002 | 24614670605                 | 24615                           | 102037            | 359275                                  |
-| 2003 | 26103389495                 | 26103                           | 137438            | 372849                                  |
-| 2004 | 26823529075                 | 26824                           | 142009            | 473707                                  |
-| 2005 | 23664952662                 | 23665                           | 117853            | 473409                                  |
-| 2006 | 10838224777                 | 10838                           | 51234             | 290471                                  |
-| 2007 | 11448864447                 | 11449                           | 54122             | 472420                                  |
-| 2008 | 13291954529                 | 13292                           | 105167            | 224074                                  |
-| 2009 | 6565383254                  | 6565                            | 57454             | 159943                                  |
-| 2010 | 6314796051                  | 6315                            | 62254             | 396512                                  |
-| 2011 | 5699784508                  | 5700                            | 61359             | 144670                                  |
-| 2012 | 4433081757                  | 4433                            | 34999             | 244328                                  |
-| 2013 | 5385598445                  | 5386                            | 40505             | 138816                                  |
-| 2014 | 4424619910                  | 4425                            | 34109             | 204153                                  |
-| 2015 | 5266362609                  | 5266                            | 37214             | 285622                                  |
+| Year | Total area deforested (sq meters) | Total area deforested (sq km) | Number areas deforested | Total area lost to fire (sq km) |
+| ---- | --------------------------------- | ----------------------------- | ----------------------- | ------------------------------- |
+| 2001 | 19488109792                       | 19488                         | 121296                  | 98679                           |
+| 2002 | 24614670605                       | 24615                         | 102037                  | 359275                          |
+| 2003 | 26103389495                       | 26103                         | 137438                  | 372849                          |
+| 2004 | 26823529075                       | 26824                         | 142009                  | 473707                          |
+| 2005 | 23664952662                       | 23665                         | 117853                  | 473409                          |
+| 2006 | 10838224777                       | 10838                         | 51234                   | 290471                          |
+| 2007 | 11448864447                       | 11449                         | 54122                   | 472420                          |
+| 2008 | 13291954529                       | 13292                         | 105167                  | 224074                          |
+| 2009 | 6565383254                        | 6565                          | 57454                   | 159943                          |
+| 2010 | 6314796051                        | 6315                          | 62254                   | 396512                          |
+| 2011 | 5699784508                        | 5700                          | 61359                   | 144670                          |
+| 2012 | 4433081757                        | 4433                          | 34999                   | 244328                          |
+| 2013 | 5385598445                        | 5386                          | 40505                   | 138816                          |
+| 2014 | 4424619910                        | 4425                          | 34109                   | 204153                          |
+| 2015 | 5266362609                        | 5266                          | 37214                   | 285622                          |
+
+These were unexpected results. The following is a graph of total area deforested and total area lost to fire:
+
+![geojson](images/deforested_vs_fire_graph.JPG)
 
 
-
-Conclusion 
+#### Conclusion 
 
 It was my original thought to use this data to see the percentage of deforestation which was happening on account of fires (as opposed to logging, etc.) - I was not expecting the total square kilometers lost to fires to far exceed the total square kilometers lost to deforestation. 
 
-There are several potential reasons for these results:
+There are some of the several potential reasons for these results:
 
-- The PRODES data is not actually monitoring the whole Legal Amazon and is therefore only representing a subset of what the FIRMS data is representing 
+- The PRODES data is not actually monitoring the whole Brazilian Legal Amazon and is therefore only representing a subset of what the FIRMS data is representing 
 - The same fire is recorded in the same 1 km square more than one time (on another day or another image taken)
+- The PRODES data does not look at all burned areas as being deforested ( a vegetation fire does not necessarily mean the forest was clear cut /deforested)
 
+More research would have to be done to determine the reason for the result. Taking a deeper look could prove valuable as the PRODES data is used to make public policy in Brazil regarding deforestation laws and reduction targets. 
 
+Although the data was not what I expected, I learned a lot through this project. In particular, I learned about shapefiles and formatting for geojson and for WKT, and how to write scrips to convert one form to the other. I also reinforced what I head learned from previous class projects about iterating through large datasets to extract information. I considered it to be a valuable project. 
 
-What does it tell us that the sq km lost to fires is higher than the deforestation data? 
