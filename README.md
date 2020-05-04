@@ -97,7 +97,7 @@ This is a table with the results:
 
 
 We see here that the number of pieces of land lost to deforestation follows the total area lost. 
-![geojson](images/area_vs_number_areas.JPG)
+![geojson](/images/area_vs_number_areas.JPG)
 
 Those times where the relative number of pieces of area lost is greater than the relative total area lost could indicate there is a greater number of smaller pieces of land being deforested as opposed to large areas being clear cut by large operations. To know this it would be helpful to have further information, namely, more information on how pieces of land are broken up and classified. This is important because there is big difference between small-scale cutting and large-scale clear cutting. Dealing with sustenance farmers and dealing with plantation farmers require different information, public policy, and enforcement of legislature. 
 
