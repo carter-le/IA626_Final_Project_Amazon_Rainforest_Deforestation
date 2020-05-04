@@ -1,5 +1,3 @@
-#IA626_Final_Project
-
 # Deforestation and Forest Degradation in the Amazon Rainforest 
 
 ## Original Intent 
@@ -26,7 +24,11 @@ I plan on using the following dataset to make my analysis (subject to change):
 
 The first dataset I downloaded from Global Forest Watch and can be found 
 
-[here]: **https://data.globalforestwatch.org/datasets/4160f715e12d46a98c989bdbe7e5f4d6_1/data?geometry=-88.744%2C-11.717%2C-33.241%2C3.579&amp;selectedAttribute=shape_Area**
+[here]: **https://data.globalforestwatch.org/datasets/4160f715e12d46a98c989bdbe7e5f4d6_1/data?geometry=-88.744%2C-11.717%2C-33.241%2C3.579&amp;selectedAttribute=shape_Area**	""title""
+
+
+
+https://data.globalforestwatch.org/datasets/4160f715e12d46a98c989bdbe7e5f4d6_1/data?geometry=-88.744%2C-11.717%2C-33.241%2C3.579&amp;selectedAttribute=shape_Area
 
 According to the description of the dataset "the PRODES project monitors clear cut deforestation in the Brazilian Legal Amazon... PRODES is operated by the National Institute of Space Research (INPE) in collaboration with the Ministry of the Environment (MMA) and the Brazilian Institute of Environment and Renewable Natural Resources (IBAMA)."
 
@@ -95,10 +97,266 @@ This is a table with the results:
 
 
 
-{{Bar-Chart}}
-- a:1
-- b:2
-- c: 3
-- a:1
-- b:2
-- c: 3
+#image
+
+[geojson](/images/original_shapefile.JPG)
+
+#image
+
+We see here that the number of pieces of land lost to deforestation follows the total area lost. 
+
+** conclusion
+
+
+
+#### Dataset 2: FIRMS Data
+
+The second dataset is historical data from NASA's active fire map and can be found here:
+
+https://firms.modaps.eosdis.nasa.gov/
+
+According to NASA "The Fire Information for Resource Management System (FIRMS) distributes Near Real-Time (NRT) active fire data within 3 hours of satellite observation from both the Moderate Resolution Imaging Spectroradiometer (MODIS) and the Visible Infrared Imaging Radiometer Suite (VIIRS)." This data is stored in archive and can be requested. 
+
+At first this seemed like it would be a simple process, but the Brazilian Legal Amazon is not listed as a country on the FIRMS request for (because it is not a country, but a region - part of a country). There is an option to request data for a custom region. This custom region needs to be a polygon formatted in Well Known Text (WKT). 
+
+To create a custom region of the Brazilian Legal Amazon and format it in WKT this we have to follow a few steps:
+
+1. Find a shapefile of the Brazilian Legal Amazon
+
+   A shapefile for the Legal Brazilian Amazon was found at the website of Ambdata, modeling group for biodiversity studies:
+
+   http://www.dpi.inpe.br/Ambdata/unidades_administrativas.php
+
+   The following image is geojson opened with the original shapefile downloaded from the Ambdata website:
+
+   #image 
+
+   
+
+2. Reduce the number of coordinates and reformat the data
+
+   The original dataset was large, so it was reduced without sacrificing much precision. The level of accuracy needed was far surpassed by the original data file. 
+
+   The following script takes the original data file and reduces and reformats it: 
+
+   ```python
+   import json
+   
+   with open('LegalAmazonArea.json') as f:
+     data = json.load(f)
+   
+   newMap = {"type":"Polygon","coordinates":[[]]}
+   n = 0
+   for point in data['features'][0]['geometry']['coordinates'][0][0]:
+       if n == 0:
+           firstpoint = point
+       if n % 10 == 0:
+           newMap['coordinates'][0].append(point)
+       n+=1 
+   newMap['coordinates'][0].append(firstpoint)
+   
+   with open('reduced_Legal_Amazon.json', 'w') as json_file:
+       json.dump(newMap, json_file)
+   ```
+
+   To test this code I uploaded the file to geojson. This confirmed that the integrity of the shape had been maintained. The result is shown here in geojson: 
+
+   #image
+
+   
+
+3. Take the properly formatted and reduced dataset and convert from json to WKT 
+
+   The following script was written to take the reduced and properly formatted json file ('reduced_Legal_Amazon.json') and output WKT:
+
+   ```python
+   import json
+   
+   with open('reduced_Legal_Amazon.json') as f:
+       polygon = json.load(f)
+   	
+   from geomet import wkt
+   
+   print(wkt.dumps(polygon, decimals=4))
+   ```
+
+   The original dataset was reformatted in step 2 in order to be taken by wkt.dumps (the json dictionary needed to be in the format I set up for newMap).
+
+   
+
+4. Take the polygon in WKT, tweak the formatting manually in Notepad (or any other such application), and insert into the FIRMS request prompt
+
+   The code shown in step 3 will print the needed WKT to the PowerShell. I copied this code into a wordpad document. 
+
+   The following is a sample of what the code will look like:
+
+   ```
+   POLYGON ((-73.2101 -9.4058, -73.1911 -9.3673, -73.1077 -9.3079, -73.0925 -9.2620, -73.0226 -9.2263, -73.0161 -9.1844, -72.9461 -9.1077, -72.9488 -9.0260, -72.9667 -8.9795, -73.0206 -8.9128, -73.0825 -8.8405, -73.1305 -8.7703, -73.1757 -8.6884, -73.2481 -8.6860, -73.3025 -8.6304, -73.3419 -8.6161, -73.3291 -8.5029, -73.3729 -8.4670, -73.4221 -8.4074, -73.4843 -8.3908, -73.5278 -8.3566, -73.5366 -8.2777))
+   ```
+
+   
+
+   The FIRMS request portal requires there be no spaces after the comma, so I manually completed a find and replace where **Find: ', ' and Replace: ','**
+
+   The following is the result:
+
+   ```wkt
+   POLYGON ((-73.2101 -9.4058,-73.1911 -9.3673,-73.1077 -9.3079,-73.0925 -9.2620,-73.0226 -9.2263,-73.0161 -9.1844,-72.9461 -9.1077,-72.9488 -9.0260,-72.9667 -8.9795,-73.0206 -8.9128,-73.0825 -8.8405,-73.1305 -8.7703,-73.1757 -8.6884,-73.2481 -8.6860,-73.3025 -8.6304,-73.3419 -8.6161,-73.3291 -8.5029,-73.3729 -8.4670,-73.4221 -8.4074,-73.4843 -8.3908,-73.5278 -8.3566,-73.5366 -8.2777, -73.2101 -9.4058))
+   ```
+
+   This polygon is now ready to be inserted into the FIRMS Download Request
+
+   #image 
+
+   We know the request was successful by clicking on "show map" for your request. Mine looked the same as the geojson of the reduced and reformatted json (refer to step 2). The region on the map is shown here: 
+
+   #image 
+
+
+
+After a short waiting period, the data was emailed to me, and I could begin to analyze the data. 
+
+Please note the following acknowledgement and refer to the disclaimer from the data provider:
+
+*We acknowledge the use of data and imagery from LANCE FIRMS operated by NASA's Earth Science Data and Information System (ESDIS) with funding provided by NASA Headquarters.*
+
+[disclaimer]: https://earthdata.nasa.gov/earth-observation-data/near-real-time/citation#ed-lance-disclaimer
+
+The following are the headers and some sample data for the dataset: 
+
+| latitude | longitude | brightness | scan | track | acq_date  | acq_time | satellite | instrument | confidence | version | bright_t31 | frp  | daynight | type |
+| -------- | --------- | ---------- | ---- | ----- | --------- | -------- | --------- | ---------- | ---------- | ------- | ---------- | ---- | -------- | ---- |
+| -6.307   | -53.2359  | 306.1      | 1.1  | 1     | 7/19/2001 | 208      | Terra     | MODIS      | 67         | 6.2     | 292.9      | 6.9  | N        | 0    |
+| -6.6621  | -53.5948  | 301.6      | 1.2  | 1.1   | 7/24/2001 | 226      | Terra     | MODIS      | 42         | 6.2     | 291.1      | 4.9  | N        | 0    |
+| -6.5475  | -53.5348  | 305.2      | 1.3  | 1.1   | 7/28/2001 | 201      | Terra     | MODIS      | 63         | 6.2     | 292.9      | 9.7  | N        | 0    |
+| -6.5358  | -53.5244  | 316.6      | 1.3  | 1.1   | 7/28/2001 | 201      | Terra     | MODIS      | 93         | 6.2     | 294.3      | 20.9 | N        | 0    |
+| -6.5373  | -53.5362  | 316.3      | 1.3  | 1.1   | 7/28/2001 | 201      | Terra     | MODIS      | 93         | 6.2     | 293.4      | 20.5 | N        | 0    |
+| -6.5256  | -53.5258  | 315        | 1.3  | 1.1   | 7/28/2001 | 201      | Terra     | MODIS      | 90         | 6.2     | 294        | 18.6 | N        | 0    |
+| -6.5271  | -53.5376  | 313.3      | 1.3  | 1.1   | 7/28/2001 | 201      | Terra     | MODIS      | 87         | 6.2     | 293.2      | 16.6 | N        | 0    |
+
+The following is an attribute description list provided:
+
+| Attribute  | Short Description                     | Long Description                                             |
+| ---------- | ------------------------------------- | ------------------------------------------------------------ |
+| Latitude   | Latitude                              | Center of 1km fire pixel but not necessarily the actual location of the fire as one or more fires can be detected within the 1km pixel. |
+| Longitude  | Longitude                             | Center of 1km fire pixel but not necessarily the actual location of the fire as one or more fires can be detected within the 1km pixel. |
+| Brightness | Brightness temperature 21 (Kelvin)    | Channel 21/22 brightness temperature of the fire pixel measured in Kelvin. |
+| Scan       | Along Scan pixel size                 | The algorithm produces 1km fire pixels but MODIS pixels get bigger toward the edge of scan. Scan and track reflect actual pixel size. |
+| Track      | Along Track pixel size                | The algorithm produces 1km fire pixels but MODIS pixels get bigger toward the edge of scan. Scan and track reflect actual pixel size. |
+| Acq_Date   | Acquisition Date                      | Data of MODIS acquisition.                                   |
+| Acq_Time   | Acquisition Time                      | Time of acquisition/overpass of the satellite (in UTC).      |
+| Satellite  | Satellite                             | A = Aqua and T = Terra.                                      |
+| Confidence | Confidence (0-100%)                   | This value is based on a collection of intermediate algorithm quantities used in the detection process. It is intended to help users gauge the quality of individual hotspot/fire pixels. Confidence estimates range between 0 and 100% and are assigned one of the three fire classes (low-confidence fire, nominal-confidence fire, or high-confidence fire). |
+| Version    | Version (Collection and source)       | Version identifies the collection (e.g. MODIS Collection 6) and source of data processing: Near Real-Time (NRT suffix added to collection) or Standard Processing (collection only). "6.0NRT" - Collection 6 NRT processing. "6.0" - Collection 6 Standard processing. Find out more on [collections](https://earthdata.nasa.gov/faq/firms-faq#ed-modis-collections) and on the [differences between FIRMS data sourced from LANCE FIRMS and University of Maryland](https://earthdata.nasa.gov/faq/firms-faq#ed-firms-umd). |
+| Bright_T31 | Brightness temperature 31 (Kelvin)    | Channel 31 brightness temperature of the fire pixel measured in Kelvin. |
+| FRP        | Fire Radiative Power (MW - megawatts) | Depicts the pixel-integrated fire radiative power in MW (megawatts). |
+| Type*      | Inferred hot spot type                | 0 = presumed vegetation fire 1 = active volcano 2 = other static land source 3 = offshore |
+| DayNight   | Day or Night                          | D= Daytime fire, N= Nighttime fire                           |
+
+I decided that I would only use fires with a confidence of 75% or above, and only look at fires which were Type 0 or 2 ("total") 
+
+I wrote the following script to determine the total fire area for fires with confidence over 75%. I chose to break it down and determine the "vegetation" fire area per year and the "other" fire area per year as well as the total fire area per year. 
+
+```python
+import csv, time
+
+start = time.time()
+fn = 'fire_archive_M6_118818.csv'
+f = open(fn,"r")
+reader = csv.reader(f) 
+
+n = 0
+totalfireareaperyr = {}
+totalfirevegitation = {}
+totalfireotherstatic = {}
+for row in reader:
+    if n > 0:
+        if int(row[9]) > 74:
+            if row[14] == "0" or row[14] == "2":
+                date = row[5][0:4]
+                if date in totalfireareaperyr.keys():
+                    totalfireareaperyr[date] += 1
+                    #each row represents 1km area where there is a fire (this is the 						 highest level of granularity that we have)
+                else:
+                    totalfireareaperyr[date] = 1
+            if row[14] == "0":
+                if date in totalfirevegitation.keys():
+                    totalfirevegitation[date] += 1
+                else:
+                    totalfirevegitation[date] = 1
+            if row[14] == "2":
+                if date in totalfireotherstatic.keys():
+                    totalfireotherstatic[date] +=1
+                else:
+                    totalfireotherstatic[date] =1
+    n+=1
+```
+
+The following table shows the results:
+
+| Year | Total (sq. km) | Vegetation (sq. km) | Other (sq. km) |
+| ---- | -------------- | ------------------- | -------------- |
+| 2001 | 34970          | 34697               | 273            |
+| 2002 | 158984         | 156664              | 2320           |
+| 2003 | 164128         | 158711              | 5417           |
+| 2004 | 212025         | 202826              | 9199           |
+| 2005 | 212748         | 210448              | 2300           |
+| 2006 | 129032         | 128192              | 840            |
+| 2007 | 213621         | 212274              | 1347           |
+| 2008 | 96560          | 96393               | 167            |
+| 2009 | 62338          | 62317               | 21             |
+| 2010 | 182896         | 182741              | 155            |
+| 2011 | 58811          | 58687               | 124            |
+| 2012 | 102178         | 101918              | 260            |
+| 2013 | 53824          | 53651               | 173            |
+| 2014 | 83780          | 83250               | 530            |
+| 2015 | 117418         | 116901              | 517            |
+
+The following graph shows that the "other" category is a small portion of the total fire area most of the time: 
+
+#image 
+
+The following is a bar graph of the total fire area (sq. km) per year: 
+
+#image
+
+On it's own, this data does not tell us much, other than the fact that some years saw more area affected by fires in the Brazilian Legal Amazon than others. 
+
+
+
+## Results
+
+The following table brings together the results of the analysis: 
+
+| Year | Total area lost (sq meters) | Total area lost (sq kilometers) | Number areas lost | Total area lost to fire (sq kilometers) |
+| ---- | --------------------------- | ------------------------------- | ----------------- | --------------------------------------- |
+| 2001 | 19488109792                 | 19488                           | 121296            | 98679                                   |
+| 2002 | 24614670605                 | 24615                           | 102037            | 359275                                  |
+| 2003 | 26103389495                 | 26103                           | 137438            | 372849                                  |
+| 2004 | 26823529075                 | 26824                           | 142009            | 473707                                  |
+| 2005 | 23664952662                 | 23665                           | 117853            | 473409                                  |
+| 2006 | 10838224777                 | 10838                           | 51234             | 290471                                  |
+| 2007 | 11448864447                 | 11449                           | 54122             | 472420                                  |
+| 2008 | 13291954529                 | 13292                           | 105167            | 224074                                  |
+| 2009 | 6565383254                  | 6565                            | 57454             | 159943                                  |
+| 2010 | 6314796051                  | 6315                            | 62254             | 396512                                  |
+| 2011 | 5699784508                  | 5700                            | 61359             | 144670                                  |
+| 2012 | 4433081757                  | 4433                            | 34999             | 244328                                  |
+| 2013 | 5385598445                  | 5386                            | 40505             | 138816                                  |
+| 2014 | 4424619910                  | 4425                            | 34109             | 204153                                  |
+| 2015 | 5266362609                  | 5266                            | 37214             | 285622                                  |
+
+
+
+Conclusion 
+
+It was my original thought to use this data to see the percentage of deforestation which was happening on account of fires (as opposed to logging, etc.) - I was not expecting the total square kilometers lost to fires to far exceed the total square kilometers lost to deforestation. 
+
+There are several potential reasons for these results:
+
+- The PRODES data is not actually monitoring the whole Legal Amazon and is therefore only representing a subset of what the FIRMS data is representing 
+- The same fire is recorded in the same 1 km square more than one time (on another day or another image taken)
+
+
+
+What does it tell us that the sq km lost to fires is higher than the deforestation data? 
